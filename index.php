@@ -14,15 +14,14 @@
 ini_set('display_errors', false);
 require_once 'UNL/UCBCN/Autoload.php';
 require_once 'Auth.php';
-$GLOBALS['unl_template_dependents'] = $_SERVER['DOCUMENT_ROOT'].'/ucomm/templatedependents';
 
-$a = new Auth('DB',array('dsn'=>'mysql://eventcal:eventcal@localhost/eventcal'),null,false);
+$a = new Auth('Array', array('users'=>array('admin'=>'admin')), null, false);
 
-$manager = new UNL_UCBCN_Manager(array('template'=>'default',
-                                        'dsn'=>'mysql://eventcal:eventcal@localhost/eventcal',
-                                        'default_calendar_id'=>1,
-                                        'a'=>$a,
-                                        'frontenduri'=>'../'));
+$manager = new UNL_UCBCN_Manager(array('template'            => 'vanilla',
+                                       'dsn'                 => 'mysql://eventcal:eventcal@localhost/eventcal',
+                                       'default_calendar_id' => 1,
+                                       'a'                   => $a,
+                                       'frontenduri'         => '../'));
 $manager->run();
 UNL_UCBCN::displayRegion($manager);
 

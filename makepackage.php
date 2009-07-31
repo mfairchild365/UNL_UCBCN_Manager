@@ -55,12 +55,17 @@ $pfm->setDescription('This package gives authenticated users access to publish e
 $pfm->setChannel('pear.unl.edu');
 $pfm->setAPIStability('beta');
 $pfm->setReleaseStability('beta');
-$pfm->setAPIVersion('0.8.0');
-$pfm->setReleaseVersion('0.8.2');
+$pfm->setAPIVersion('0.9.0');
+$pfm->setReleaseVersion('0.9.0');
 $pfm->setNotes('
-0.8.2 Changes:
-Post-install script would create template directories with no permissions 
-resulting in "template error, examine fetch() result."
+0.9.0 Changes:
+* Thanks to Brian Steere there is a new vanilla template for the manager.
+* The vanilla template is now the default.
+* The sample index file uses an admin username for logging in.
+
+Upgrade Notes:
+* Add require_once \'UNL/UCBCN/Autoload.php\'; to the index.php file.
+* The unl_template_dependents global can be removed if you are not using the default template.
 ');
 
 //$pfm->addMaintainer('lead','saltybeagle','Brett Bieber','brett.bieber@gmail.com');
@@ -71,7 +76,7 @@ $pfm->setPhpDep('5.1.2');
 $pfm->setPearinstallerDep('1.5.4');
 $pfm->addPackageDepWithChannel('required', 'DB_DataObject_FormBuilder', 'pear.php.net', '0.18.1');
 $pfm->addPackageDepWithChannel('required', 'Auth', 'pear.php.net', '1.3.0');
-$pfm->addPackageDepWithChannel('required', 'UNL_UCBCN', 'pear.unl.edu', '0.8.0');
+$pfm->addPackageDepWithChannel('required', 'UNL_UCBCN', 'pear.unl.edu', '0.8.1');
 $pfm->addPackageDepWithChannel('required', 'Pager', 'pear.php.net', '2.2.1');
 $pfm->addPackageDepWithChannel('required', 'HTML_Table', 'pear.php.net', '1.6.0');
 foreach (array('UNL/UCBCN/Manager.php','UNL/UCBCN/Manager_setup.php','index.php') as $file) {
@@ -92,7 +97,7 @@ $task->addParamGroup('questionCreate', array(
     ));
 $task->addParamGroup('fileSetup', array(
     $task->getParam('docroot',        'Path to root of webserver', 'string', '/Library/WebServer/Documents/events/manager'),
-    $task->getParam('template',       'Template style to use', 'string', 'default')
+    $task->getParam('template',       'Template style to use', 'string', 'vanilla')
     ));
 $task->addParamGroup('accountSetup', array(
     $task->getParam('dsn',            'Database connection string (DSN)', 'string', 'mysqli://eventcal:eventcal@localhost/eventcal'),
