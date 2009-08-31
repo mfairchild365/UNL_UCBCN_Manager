@@ -835,6 +835,8 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
     function showEventDateTimeForm()
     {
         include_once 'UNL/UCBCN/Manager/jscalendar.php';
+        include_once 'DB/DataObject/FormBuilder/QuickForm/SubForm.php';
+        
         $msg = '';
         $edt = UNL_UCBCN_Manager::factory('eventdatetime');
         if (isset($_GET['delete'])) {
