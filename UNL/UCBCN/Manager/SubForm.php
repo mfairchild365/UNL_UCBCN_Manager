@@ -25,6 +25,10 @@ require_once 'DB/DataObject/FormBuilder/QuickForm/SubForm.php';
  */
 class UNL_UCBCN_Manager_SubForm extends HTML_QuickForm_SubForm
 {
+    function UNL_UCBCN_Manager_SubForm($name=null, $label=null, $form=null)
+    {
+        $this->HTML_QuickForm_SubForm($name, $label, $form);
+    }
 
     /**
      * renders the element

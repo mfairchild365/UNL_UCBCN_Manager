@@ -1210,7 +1210,9 @@ class UNL_UCBCN_Manager_FormBuilder extends DB_DataObject_FormBuilder
                         && method_exists($this->_do, 'get' . $key)) {
                         $formValues[$key] = $this->_do->{'get'.$key}();
                     } else {
-                        $formValues[$key] = $this->_do->$key;
+                        if (isset($this->_do->$key)) {
+                            $formValues[$key] = $this->_do->$key;
+                        }
                     }
                     if (!isset($element)) {
                         $element =& $this->_form->_createIntegerField($key);
