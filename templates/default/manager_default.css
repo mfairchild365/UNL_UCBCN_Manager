@@ -83,7 +83,15 @@ h4#sec_nav {
 	background: url(images/nav_import.gif) no-repeat;
 }
 
-#navlinks ul li#mycalendar a:hover,#navigation ul li#create a:hover,#navigation ul li#subscribe a:hover,#navlinks ul li#import a:hover,body#normal #navigation ul li#mycalendar a,body#create #navigation ul li#create a, body#subscribe #navigation ul li#subscribe a,body#import #navigation ul li#import a,body#normal #navigation ul li#calendar a
+#navlinks ul li#mycalendar a:hover,
+#navlinks ul li#create a:hover,
+#navlinks ul li#subscribe a:hover,
+#navlinks ul li#import a:hover,
+body#normal #navlinks ul li#mycalendar a,
+body#create #navlinks ul li#create a,
+body#subscribe #navlinks ul li#subscribe a,
+body#import #navlinks ul li#import a,
+body#normal #navlinks ul li#calendar a
 {background-position:0 -47px;}
 
 #container div.clear #navigation #leftcollinks {
@@ -106,7 +114,7 @@ div.cal_widget h3 {
 	font-size: 12px !important;
 	clear: both;
 	margin: 0;
-	padding: 8px 0 5px 12px;
+	padding: 8px 0 5px 12px !important;
 	background: url(images/recent.gif) no-repeat left top;
 	width: 222px;
 	height: 15px;
@@ -122,8 +130,8 @@ div.cal_widget h3 img {
 }
 
 div.cal_widget ul {
-	list-style: none;
-	padding: 21px 0 10px 14px;
+	list-style: none !important;
+	padding: 21px 0 10px 14px !important;
 	margin: -14px 0 0 0;
 	background: url(images/recent_mid.gif) repeat-y right top;
 }
