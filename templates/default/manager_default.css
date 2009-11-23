@@ -516,14 +516,6 @@ body#login #maincontent form label.element {width: 65px;}
 
 body#login #maincontent form fieldset{width:415px;}
 
-body#login div#container #main_right{position:absolute;margin:0 0 0 130px}
-body#login {background:#eee;}
-body#login #footer{background:#eee;border:none;}
-body#login	#footer #footer_floater {
-			border-top: 3px solid #AF0909; 
-			border-bottom: 1px solid #666;
-			padding:5px 11px 10px 11px;
-			background: #414241;}
 body#login #container div.clear {
 			min-height:500px;	
 			height:500px;	
