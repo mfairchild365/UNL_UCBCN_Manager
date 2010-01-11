@@ -25,6 +25,16 @@
 <!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
 <link rel="stylesheet" type="text/css" media="screen" href="templates/default/manager_main.css" />
 <script type="text/javascript" src="templates/default/manager.js"></script>
+<?php
+if (isset($this->user)) {
+    echo '<script type="text/javascript">
+            try {
+                WDN.idm.logoutURL = "'.$this->uri.'?logout=true";
+                WDN.idm.displayNotice("'.$this->user->uid.'");
+            } catch(e) {}
+          </script>';
+}
+?>
 <!-- InstanceEndEditable -->
 </head>
 <body class="secure fixed document" <?php echo $this->uniquebody; ?>>
@@ -32,7 +42,6 @@
 <div id="wdn_wrapper">
     <div id="header"> <a href="http://www.unl.edu/" title="UNL website"><img src="/wdn/templates_3.0/images/logo.png" alt="UNL graphic identifier" id="logo" /></a>
         <h1>University of Nebraska&ndash;Lincoln</h1>
-        <div id="wdn_identity_management"><div id="explanation"><!-- InstanceBeginEditable name="identitymanagement" --><p><a href="<?php echo $this->uri; ?>?logout=true">Logout</a></p><!-- InstanceEndEditable --></div></div>
     </div>
     <div id="wdn_navigation_bar">
         <div id="breadcrumbs">
