@@ -42,6 +42,9 @@ if (isset($this->user)) {
 <div id="wdn_wrapper">
     <div id="header"> <a href="http://www.unl.edu/" title="UNL website"><img src="/wdn/templates_3.0/images/logo.png" alt="UNL graphic identifier" id="logo" /></a>
         <h1>University of Nebraska&ndash;Lincoln</h1>
+        <?php if (isset($this->user)) {
+            UNL_UCBCN::displayRegion($this->calendarselect);
+        } ?>
     </div>
     <div id="wdn_navigation_bar">
         <div id="breadcrumbs">
@@ -105,7 +108,6 @@ if (isset($this->user)) {
             <div class="three_col right">
                 <?php
                 if (isset($this->user)) { 
-                    UNL_UCBCN::displayRegion($this->calendarselect);
                     ?>
                     <form id="event_search" name="event_search" method="get" action="<?php echo $this->uri; ?>">
                         <input type='text' name='q' id='searchinput' value="<?php if (isset($_GET['q'])) { echo htmlentities($_GET['q']); } ?>" />
