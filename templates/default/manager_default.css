@@ -356,6 +356,7 @@ body:last-child:not(:root:root) #maincontent label {
 	top:0px;
 	right:20px;
 	font-size:80%;
+	z-index:1000;
 }
 #cal_choose li {
 	float:left;
