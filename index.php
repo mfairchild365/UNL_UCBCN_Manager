@@ -17,7 +17,7 @@ require_once 'Auth.php';
 
 $a = new Auth('Array', array('users'=>array('admin'=>'admin')), null, false);
 
-$manager = new UNL_UCBCN_Manager(array('template'            => 'default',
+$manager = new UNL_UCBCN_Manager(array('template'            => 'vanilla',
                                        'dsn'                 => 'mysql://eventcal:eventcal@localhost/eventcal',
                                        'default_calendar_id' => 1,
                                        'a'                   => $a,
