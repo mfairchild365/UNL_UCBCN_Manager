@@ -321,7 +321,8 @@ function checkInput(){
 }
 
 WDN.jQuery(document).ready(function(){
-	if (WDN.idm.user) {
+	if (WDN.idm.user &&
+		WDN.jQuery('#unl_ucbcn_event input[name=id]').attr('value') == '') {
 		try {
 			if (WDN.jQuery('#listingcontactname').attr('value') == '') {
 				WDN.jQuery('#listingcontactname').attr('value', WDN.idm.user.cn);
