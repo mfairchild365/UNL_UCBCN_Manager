@@ -319,3 +319,21 @@ function checkInput(){
         manager.eventselected = true;
     }
 }
+
+WDN.jQuery(document).ready(function(){
+	if (WDN.idm.user) {
+		try {
+			if (WDN.jQuery('#listingcontactname').attr('value') == '') {
+				WDN.jQuery('#listingcontactname').attr('value', WDN.idm.user.cn);
+			}
+			if (WDN.jQuery('#listingcontactphone').attr('value') == '') {
+				WDN.jQuery('#listingcontactphone').attr('value', WDN.idm.user.telephoneNumber);
+			}
+			if (WDN.jQuery('#listingcontactemail').attr('value') == '') {
+				WDN.jQuery('#listingcontactemail').attr('value', WDN.idm.user.mail);
+			}
+		} catch(e) {
+			// fail gracefully
+		}
+	}
+});
