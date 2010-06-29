@@ -131,18 +131,19 @@ class UNL_UCBCN_Manager_EventForm
     function getRelatedLocationDateAndTimes(UNL_UCBCN_Event $event)
     {
         $edt = UNL_UCBCN::factory('eventdatetime');
-        $edt->selectAdd('UNIX_TIMESTAMP(starttime) AS starttimeu, UNIX_TIMESTAMP(endtime) AS endtimeu');
+        $edt->selectAdd('UNIX_TIMESTAMP(starttime) AS starttimeu, UNIX_TIMESTAMP(endtime) AS endtimeu, UNIX_TIMESTAMP(recurs_until) AS recurs_untilu');
         $edt->event_id = $event->id;
         $edt->orderBy('starttime DESC');
         $instances = $edt->find();
         if ($instances) {
             include_once 'HTML/Table.php';
             $table = new HTML_Table(array('class'=>'eventlisting'));
-            $table->addRow(array('Start Time', 'End Time', 'Location', 'Edit', 'Delete'), null, 'TH');
+            $table->addRow(array('Start Time', 'End Time', 'Recurs Until', 'Location', 'Edit', 'Delete'), null, 'TH');
             $instances = 0;
             while ($edt->fetch()) {
                 $etime = '';
                 $stime = '';
+                $rutime = '';
                 if (isset($edt->location_id)) {
                     $l        = $edt->getLink('location_id');
                     $location = $l->name;
@@ -164,15 +165,22 @@ class UNL_UCBCN_Manager_EventForm
                 } elseif ($edt->endtime != '0000-00-00 00:00:00') {
                     $etime .= '<li>'.date('M jS', $edt->endtimeu).'</li>';
                 }
+                if ($edt->recurs_until != null && substr($edt->recurs_until, 11) != '00:00:00') {
+                	$rutime .= '<li>'.date('M jS g:ia', $edt->recurs_untilu).'</li>';
+                } elseif ($edt->recurs_until != null && $edt->recurs_until != '00:00:00') {
+                	$rutime .= '<li>'.date('M jS', $edt->recurs_untilu).'</li>';
+                }
+                //$rutime .= '<li>'.date('M jS', $edt->recurs_untilu).'</li>';
                 $instances = $table->addRow(array($stime,
                                     $etime,
+                                    $rutime,
                                     $location,
                                     '<a href="'.$this->manager->uri.'?action=eventdatetime&id='.$edt->id.'">Edit</a>',
                                     $delete));
             }
             $table->addRow(array('<a class="subsectionlink" href="'.$this->manager->uri.'?action=eventdatetime&event_id='.$event->id.'">Add additional location, date and time.</a>'));
-            $table->setColAttributes(3, 'class="edit"');
-            $table->setColAttributes(4, 'class="delete"');
+            $table->setColAttributes(4, 'class="edit"');
+            $table->setColAttributes(5, 'class="delete"');
             return $table->toHtml();
         } else {
             return 'Could not find any related event date and times.';

@@ -55,6 +55,116 @@ function showHide(e)
    return false;
 }
 
+/**
+ * Shows/Hides the Monthly Recurring Type select and populates it accordingly
+ */
+function toggleMonth(pre, togg, post)
+{
+   var elemId = pre + "rectypemonth" + post;
+   var elem = document.getElementById(elemId);
+   if (togg.id == pre + "recurringtype" + post) {
+   var i    = togg.selectedIndex;
+	   if (togg.options[i].value == 'monthly') {
+		   getLabelFor(elemId).innerHTML = 'Type of Monthly Recurrence';
+		   document.getElementById(elemId).style.display = 'block';
+	   } else {
+		   getLabelFor(elemId).innerHTML = '';
+		   document.getElementById(elemId).style.display = 'none';
+	   }
+   }
+   // get startdate info
+   togg = document.getElementById(pre + "recurs_until" + post);
+   var weekdays = Array("Sunday", "Monday", "Tuesday",
+		   "Wednesday", "Thursday", "Friday", "Saturday");
+   var startelem = document.getElementById(pre + "starttime" + post);
+   var startyear = startelem.value.substring(0, 4);
+   var startmonth = startelem.value.substring(5, 7);
+   var startday = startelem.value.substring(8, 10);
+   var startdate = new Date(startyear, startmonth-1, startday);
+   var startweekday = weekdays[startdate.getDay()];
+   if (togg.value != '') {
+	   // get day of week
+	   var year  = togg.value.substring(0, 4);
+	   var month = togg.value.substring(5, 7);
+	   var day   = togg.value.substring(8, 10);
+	   var date  = new Date(year, month-1, day);
+	   var weekday = weekdays[date.getDay()];
+	   // get week in month
+	   var nth = {"1":"First",
+			      "2":"Second",
+			      "3":"Third",
+			      "4":"Fourth",
+			      "5":"Last"};
+	   var week = 0;
+	   for (var i = 1; i <= day; i++) {
+          var d = new Date(year, month-1, i);
+          if (weekdays[d.getDay()] == weekday) {
+        	 week++;
+          }
+	   }
+	   // get total of day in month
+	   var total = 0;
+	   var i = 1;
+	   var d = new Date(year, month-1, 1);
+	   while (i == d.getDate()) {
+		  if (weekdays[d.getDay()] == weekday) {
+			 total++;
+		  }
+		  d = new Date(year, month-1, ++i);
+	   }
+	   // remove options, if any
+	   for (var i = elem.length-1; i > -1 ; i--) {
+          elem.remove(i);
+	   }
+	   // populate rectypemonth with appropriate options
+	   var op;
+	   if (startweekday == weekday) {
+		   op       = document.createElement('option');
+		   op.id    = pre + 'nth' + post;
+		   op.value = nth[week].toLowerCase();
+		   op.text  = nth[week] + ' ' + weekday + ' of every month';
+		   elem.add(op, null);
+		   op       = document.createElement('option');
+		   if (week == 4 && total == 4) {
+	          op       = document.createElement('option');
+	          op.id    = pre + 'last' + post;
+	          op.value = 'last';
+	          op.text  = 'Last ' + weekday + ' of month';
+	          elem.add(op, null);
+		   }
+	   }
+	   if (startday == day) {
+		   op       = document.createElement('option');
+		   op.id    = pre + 'date' + post;
+		   op.value = 'date';
+		   if (day.substr(1) == "1" || day.substr(1) == "2" || day.substr(1) == "3") {
+	          op.text = day + nth[day.substr(1)].substr(-2) + ' of every month';
+		   } else {
+	          op.text = day + 'th of every month'
+		   }
+	       if (day.substr(0, 1) == "0") {
+		      op.text = op.text.substr(1);
+	       }
+		   elem.add(op, null);
+	   }
+   }
+}
+
+/**
+ *  Gets the label for element elem.name
+ */
+function getLabelFor(name) {
+    var labels = document.getElementsByTagName('label');
+    for (var i in labels) {
+        if (labels[i].htmlFor == name) {
+            return labels[i];
+        }
+        if (labels[i].for == name) {
+        	return labels[i];
+        }
+    }
+    return false;
+}
 
 /**
  * Namespace for manager javascript.
