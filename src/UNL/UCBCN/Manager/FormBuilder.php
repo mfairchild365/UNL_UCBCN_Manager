@@ -901,7 +901,7 @@ class UNL_UCBCN_Manager_FormBuilder extends DB_DataObject_FormBuilder
                                      DB_DATAOBJECT_FORMBUILDER_ERROR_UNKNOWNDRIVER);
             return $err;
         }
-        $fb =& new $mainClass($do, $options);        
+        $fb = new $mainClass($do, $options);        
         $className = 'db_dataobject_formbuilder_'.strtolower($driver);
         $fileName = 'DB/DataObject/FormBuilder/'.$driver.'.php';
 
@@ -931,7 +931,7 @@ class UNL_UCBCN_Manager_FormBuilder extends DB_DataObject_FormBuilder
             }
         }
 
-        $fb->_form =& new $className($fb);
+        $fb->_form = new $className($fb);
         return $fb;
     }
 

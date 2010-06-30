@@ -275,7 +275,7 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
         $form->addElement('header', 'importhead', 'Import iCalendar .ics/xml:');
         $form->addElement('file', 'filename', 'Filename');
         $form->addElement('submit', 'Submit', 'Submit');
-        $renderer =& new HTML_QuickForm_Renderer_Tableless();
+        $renderer = new HTML_QuickForm_Renderer_Tableless();
         $form->accept($renderer);
         return $renderer->toHtml();
     }
@@ -443,7 +443,7 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
         } else {
             $form->setDefaults(array('calendar_id'=>$this->calendar->id));
         }
-        $renderer =& new HTML_QuickForm_Renderer_Tableless();
+        $renderer = new HTML_QuickForm_Renderer_Tableless();
         $form->accept($renderer);
         if ($form->validate()) {
             if ((isset($subscription->id) && UNL_UCBCN::userHasPermission($this->user, 'Calendar Edit Subscription', $this->calendar))
@@ -701,7 +701,7 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
             $form->insertElementBefore($checkall, '__crossLink_user_has_permission_user_uid_permission_id');
             $uncheckall = HTML_QuickForm::createElement('static', 'uncheckall', null, '<a href="#" class="uncheckall" id="uncheckall" onclick="setCheckboxes(\'unl_ucbcn_user\',false); return false">Uncheck All</a>');
             $form->insertElementBefore($uncheckall, '__crossLink_user_has_permission_user_uid_permission_id');
-            $renderer =& new HTML_QuickForm_Renderer_Tableless();
+            $renderer = new HTML_QuickForm_Renderer_Tableless();
             $form->accept($renderer);
             if ($form->validate()) {
                 $form->process(array(&$fb, 'processForm'), false);
@@ -785,7 +785,7 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
             $fb  = DB_DataObject_FormBuilder::create($this->account);
             if (!PEAR::isError($fb)) {
                 $form     = $fb->getForm('?action=account');
-                $renderer =& new HTML_QuickForm_Renderer_Tableless();
+                $renderer = new HTML_QuickForm_Renderer_Tableless();
                 $form->accept($renderer);
                 if ($form->validate()) {
                     $form->process(array(&$fb, 'processForm'), false);
@@ -813,7 +813,7 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
             $msg      = '';
             $fb       = DB_DataObject_FormBuilder::create($this->calendar);
             $form     = $fb->getForm($this->uri.'?action=calendar&calendar_id='.$this->calendar->id);
-            $renderer =& new HTML_QuickForm_Renderer_Tableless();
+            $renderer = new HTML_QuickForm_Renderer_Tableless();
             $form->accept($renderer);
             if ($form->validate()) {
                 $form->process(array(&$fb, 'processForm'), false);
@@ -871,7 +871,7 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
             }
             $form->insertElementBefore(HTML_QuickForm::createElement('header', 'eventlocationheader', $msg),
                 'location_id');
-            $renderer =& new HTML_QuickForm_Renderer_Tableless();
+            $renderer = new HTML_QuickForm_Renderer_Tableless();
             $form->accept($renderer);
             if ($form->validate()) {
                 if ($form->process(array(&$fb, 'processForm'), false)) {
@@ -1006,7 +1006,7 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
         $form->addElement('text', 'uid', 'User Id (like jdoe2):');
         $form->addElement('submit', 'submit', 'Add User');
         $form->addElement('hidden', 'action', 'permissions');
-        $renderer =& new HTML_QuickForm_Renderer_Tableless();
+        $renderer = new HTML_QuickForm_Renderer_Tableless();
         $form->accept($renderer);
         return $renderer->toHtml();
     }
@@ -1035,7 +1035,7 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
             }
             $form->addElement($cal_select);
             $form->addElement('submit', 'submit', 'Go');
-            $renderer =& new HTML_QuickForm_Renderer_Tableless();
+            $renderer = new HTML_QuickForm_Renderer_Tableless();
             $form->accept($renderer);
             $output = $renderer->toHtml();
         } else {

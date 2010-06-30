@@ -83,7 +83,7 @@ class UNL_UCBCN_Manager_EventForm
             $form->freeze();
             $form->removeElement('__submit__');
         }
-        $renderer =& new HTML_QuickForm_Renderer_Tableless();
+        $renderer = new HTML_QuickForm_Renderer_Tableless();
         $renderer->addStopFieldsetElements(array(
                                                     '__submit__'
                                                     ));
