@@ -144,8 +144,8 @@ class UNL_UCBCN_Manager_EventForm
                 $etime = '';
                 $stime = '';
                 $rutime = '';
-                if (isset($edt->location_id)) {
-                    $l        = $edt->getLink('location_id');
+                if (isset($edt->location_id)
+                    && $l = $edt->getLink('location_id')) {
                     $location = $l->name;
                 } else {
                     $location = 'Unknown';
