@@ -112,6 +112,13 @@ function toggleMonth(pre, togg, post)
 		  }
 		  d = new Date(year, month-1, ++i);
 	   }
+	   // get number of days (28, 29, 30, 31) in month
+	   var daysinmonth = 28;
+	   d = new Date(year, month-1, 28);
+	   while (daysinmonth == d.getDate()) {
+		   d = new Date(year, month-1, ++daysinmonth);
+	   }
+	   daysinmonth--;
 	   // remove options, if any
 	   for (var i = elem.length-1; i > -1 ; i--) {
           elem.remove(i);
@@ -146,6 +153,13 @@ function toggleMonth(pre, togg, post)
 		      op.text = op.text.substr(1);
 	       }
 		   elem.add(op, null);
+	   }
+	   if (daysinmonth == day) {
+           op       = document.createElement('option');
+           op.id    = pre + 'lastday' + post;
+           op.value = 'lastday';
+           op.text  = 'Last day of month';
+           elem.add(op, null);
 	   }
    }
 }
