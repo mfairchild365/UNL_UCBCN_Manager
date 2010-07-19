@@ -70,7 +70,14 @@ foreach ($this->events as $e) {
 	$row .= '</td>' .
 			'<td class="edit">';
 	if (UNL_UCBCN::userCanEditEvent($_SESSION['_authsession']['username'],$e)) {
-		$row .= '<a href="?action=createEvent&amp;id='.$e->id.'">Edit</a>';
+		if ($edt->recurringtype == 'none') {
+			$row .= '<a href="?action=createEvent&amp;id='.$e->id.'">Edit</a>';
+		} else {
+			$row .= '<a href="?action=createEvent&amp;id='.$e->id.
+			'&amp;rec=this&amp;recid='.$e->recurrence_id.'">Edit this</a>&nbsp;';
+			$row .= '<a href="?action=createEvent&amp;id='.$e->id.
+			'&amp;rec=all&amp;recid='.$e->recurrence_id.'">Edit all</a>';
+		}
 	}
 	$row .=		'</td></tr>';
 	echo $row;
