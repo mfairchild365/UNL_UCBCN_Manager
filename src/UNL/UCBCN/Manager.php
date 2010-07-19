@@ -742,8 +742,21 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
             $orderby = 'event.title';
             break;
         }
+        $today = date('Y-m-d');
+        switch ($status) {
+        case 'posted':
+            $addrecurring = "OR (calendar_has_event.status = 'archived'
+                                 AND eventdatetime.recurringtype != 'none'
+                                 AND eventdatetime.recurs_until > $today)) ";
+            break;
+        case 'archived':
+        case 'pending':
+            $addrecurring = ')';
+            break;
+        }
         $sql          = 'SELECT DISTINCT event.id FROM calendar_has_event, eventdatetime, event
-                        WHERE calendar_has_event.status = \''.$status.'\'
+                        WHERE (calendar_has_event.status = \''.$status.'\'
+                        '.$addrecurring.'
                         AND calendar_has_event.event_id = event.id
                         AND eventdatetime.event_id = event.id
                         AND calendar_has_event.calendar_id = '.$this->calendar->id.'
@@ -757,7 +770,24 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
             foreach ($paged_result['data'] as $event_id) {
                 $event = UNL_UCBCN_Manager::factory('event');
                 if ($event->get($event_id['id'])) {
-                    $listing->events[] = $event;
+                    $recurringdate = UNL_UCBCN_Manager::factory('recurringdate');
+                    $recurringdate->event_id = $event_id['id'];
+                    $recurringdate->whereAdd("ongoing = FALSE");
+                    if ($status == 'posted') {
+                        $recurringdate->whereAdd("recurringdate > '$today'");
+                    } else if ($status == 'archived') {
+                        $recurringdate->whereAdd("recurringdate < '$today'");
+                    }
+                    $recurring = $recurringdate->find();
+                    while ($recurringdate->fetch()) {
+                        $event = UNL_UCBCN_Manager::factory('event');
+                        $event->get($event_id['id']);
+                        $event->recurrence_id = $recurringdate->recurrence_id;
+                        $listing->events[] = $event;
+                    }
+                    if (!$recurring) {
+                        $listing->events[] = $event;
+                    }
                 }
             }
             $e[] = $listing;

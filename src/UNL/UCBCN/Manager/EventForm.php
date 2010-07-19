@@ -130,6 +130,11 @@ class UNL_UCBCN_Manager_EventForm
      */
     function getRelatedLocationDateAndTimes(UNL_UCBCN_Event $event)
     {
+        if (isset($_REQUEST['rec']) && isset($_REQUEST['recid'])) {
+            $recinfo = '&rec='.$_REQUEST['rec'].'&recid='.$_REQUEST['recid'];
+        } else {
+            $recinfo = '';
+        }
         $edt = UNL_UCBCN::factory('eventdatetime');
         $edt->selectAdd('UNIX_TIMESTAMP(starttime) AS starttimeu, UNIX_TIMESTAMP(endtime) AS endtimeu, UNIX_TIMESTAMP(recurs_until) AS recurs_untilu');
         $edt->event_id = $event->id;
@@ -175,7 +180,7 @@ class UNL_UCBCN_Manager_EventForm
                                     $etime,
                                     $rutime,
                                     $location,
-                                    '<a href="'.$this->manager->uri.'?action=eventdatetime&id='.$edt->id.'">Edit</a>',
+                                    '<a href="'.$this->manager->uri.'?action=eventdatetime&id='.$edt->id.$recinfo.'">Edit</a>',
                                     $delete));
             }
             $table->addRow(array('<a class="subsectionlink" href="'.$this->manager->uri.'?action=eventdatetime&event_id='.$event->id.'">Add additional location, date and time.</a>'));
