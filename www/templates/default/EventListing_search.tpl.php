@@ -67,14 +67,13 @@ foreach ($this->events as $event) {
 			<td class="edit">
 				<?php
 				if ($event['usercaneditevent']) {
-					echo '<a href="?action=createEvent&amp;id='.$event['id'].'">Edit</a></td>';
 					if ($edt->recurringtype == 'none') {
-						$row .= '<a href="?action=createEvent&amp;id='.$event['id'].'">Edit</a></td>';
+						echo '<a href="?action=createEvent&amp;id='.$event['id'].'">Edit</a></td>';
 					} else {
-						$row .= '<a href="?action=createEvent&amp;id='.$event['id'].
+						echo '<a href="?action=createEvent&amp;id='.$event['id'].
 						        '&amp;rec=this&amp;recid='.$event['recurrence_id'].
 						        '">Edit this</a>&nbsp;';
-						$row .= '<a href="?action=createEvent&amp;id='.$event['id'].
+						echo '<a href="?action=createEvent&amp;id='.$event['id'].
 						        '&amp;rec=all&amp;recid='.$event['recurrence_id'].
 						        '">Edit all</a></td>';
 					}
