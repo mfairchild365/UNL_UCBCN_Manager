@@ -40,6 +40,22 @@ function getElementsByClassName(oElm, strTagName, strClassName){
 }
 
 /**
+ * Asks the user how a recurring event should be edited.
+ */
+function showConfirmationDialog(event_id, rec_id) {
+   var href = '?action=createEvent&amp;id='+event_id;
+   href1 = href+'&amp;rec=this&amp;recid='+rec_id;
+   href2 = href+'&amp;rec=all&amp;recid='+rec_id;
+   href3 = href+'&amp;rec=following&amp;recid='+rec_id;
+   var msg = 'This is a recurring event. Would you like to edit:<br />';
+   msg    += '<ul><li><a href="'+href1+'">Only this event</a></li>';
+   msg    += '<li><a href="'+href2+'">All events in series</a></li>';
+   msg    += '<li><a href="'+href3+'">All following events</a></li>';
+   msg    += '<li id="cancel"><input type="button" value="Cancel" onclick="hideDialog();" /></li></ul>';
+   showDialog('', msg, 'prompt');
+}
+
+/**
  * Will show or hide an element with the given ID.
  */
 function showHide(e)

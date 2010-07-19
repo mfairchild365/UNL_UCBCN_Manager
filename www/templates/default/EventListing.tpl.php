@@ -73,10 +73,7 @@ foreach ($this->events as $e) {
 		if ($edt->recurringtype == 'none') {
 			$row .= '<a href="?action=createEvent&amp;id='.$e->id.'">Edit</a>';
 		} else {
-			$row .= '<a href="?action=createEvent&amp;id='.$e->id.
-			'&amp;rec=this&amp;recid='.$e->recurrence_id.'">Edit this</a>&nbsp;';
-			$row .= '<a href="?action=createEvent&amp;id='.$e->id.
-			'&amp;rec=all&amp;recid='.$e->recurrence_id.'">Edit all</a>';
+			$row .= "<a onclick='showConfirmationDialog(\"{$e->id}\", \"{$e->recurrence_id}\");'>Edit</a>";
 		}
 	}
 	$row .=		'</td></tr>';

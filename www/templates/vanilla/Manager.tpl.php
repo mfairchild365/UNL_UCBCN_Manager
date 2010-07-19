@@ -7,7 +7,9 @@ header('Content-Type:text/html; charset=UTF-8');
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <title><?php echo $this->doctitle; ?></title>
         <link rel="stylesheet" type="text/css" media="screen" href="templates/vanilla/manager_main.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="templates/vanilla/dialog/dialog_box.css" />
         <script type="text/javascript" src="templates/vanilla/manager.js"></script>
+        <script type="text/javascript" src="templates/vanilla/dialog/dialog_box.js"></script>
     </head>
     <body <?php echo $this->uniquebody; ?>>
         <div id="mainWrapper">

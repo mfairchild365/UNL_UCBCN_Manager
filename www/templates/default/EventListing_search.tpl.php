@@ -70,12 +70,7 @@ foreach ($this->events as $event) {
 					if ($edt->recurringtype == 'none') {
 						echo '<a href="?action=createEvent&amp;id='.$event['id'].'">Edit</a></td>';
 					} else {
-						echo '<a href="?action=createEvent&amp;id='.$event['id'].
-						        '&amp;rec=this&amp;recid='.$event['recurrence_id'].
-						        '">Edit this</a>&nbsp;';
-						echo '<a href="?action=createEvent&amp;id='.$event['id'].
-						        '&amp;rec=all&amp;recid='.$event['recurrence_id'].
-						        '">Edit all</a></td>';
+						echo "<a onclick='showConfirmationDialog(\"{$event['id']}\", \"{$event['recurrence_id']}\");'>Edit</a>";
 					}
 				} ?>
 			</td>

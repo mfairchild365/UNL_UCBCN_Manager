@@ -27,7 +27,9 @@ header('Content-Type:text/html; charset=UTF-8');
 <title><?php echo $this->doctitle; ?></title>
 <!-- InstanceEndEditable --><!-- InstanceBeginEditable name="head" -->
 <link rel="stylesheet" type="text/css" media="screen" href="templates/default/manager_main.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="templates/default/dialog/dialog_box.css" />
 <script type="text/javascript" src="templates/default/manager.js"></script>
+<script type="text/javascript" src="templates/default/dialog/dialog_box.js"></script>
 <?php
 if (isset($this->user)) {
     echo '<script type="text/javascript">
