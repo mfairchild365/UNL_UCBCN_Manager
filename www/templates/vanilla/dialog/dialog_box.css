@@ -7,7 +7,7 @@
 #dialog-content {display:block; height:160px; padding:6px; color:#666666; font-size:13px}
 #dialog-content li {padding:0.2em;}
 #dialog-content li#cancel {list-style-type:none;}
-#dialog-mask {position:absolute; top:0; left:0; min-height:100%; width:100%; background:#FFF; opacity:.75; filter:alpha(opacity=75); z-index:100}
+#dialog-mask {position:fixed; top:0; left:0; min-height:100%; width:100%; background:#FFF; opacity:.75; filter:alpha(opacity=75); z-index:100}
 .error {background:#fff url(images/error_bg.jpg) bottom right no-repeat; border:1px solid #924949; border-top:none}
 .errorheader {background:url(images/error_header.gif) repeat-x; color:#6f2c2c; border:1px solid #924949; border-bottom:none}
 .warning {background:#fff url(images/warning_bg.jpg) bottom right no-repeat; border:1px solid #c5a524; border-top:none}
