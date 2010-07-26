@@ -747,7 +747,7 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
         case 'posted':
             $addrecurring = "OR (calendar_has_event.status = 'archived'
                                  AND eventdatetime.recurringtype != 'none'
-                                 AND eventdatetime.recurs_until > $today)) ";
+                                 AND eventdatetime.recurs_until >= $today)) ";
             break;
         case 'archived':
         case 'pending':
@@ -773,17 +773,21 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
                     $recurringdate = UNL_UCBCN_Manager::factory('recurringdate');
                     $recurringdate->event_id = $event_id['id'];
                     $recurringdate->whereAdd("ongoing = FALSE");
+                    //$recurringdate->whereAdd("unlinked = FALSE");
                     if ($status == 'posted') {
-                        $recurringdate->whereAdd("recurringdate > '$today'");
+                        $recurringdate->whereAdd("recurringdate >= '$today'");
                     } else if ($status == 'archived') {
                         $recurringdate->whereAdd("recurringdate < '$today'");
                     }
+                    $recurringdate->orderBy("recurringdate DESC");
                     $recurring = $recurringdate->find();
                     while ($recurringdate->fetch()) {
-                        $event = UNL_UCBCN_Manager::factory('event');
-                        $event->get($event_id['id']);
-                        $event->recurrence_id = $recurringdate->recurrence_id;
-                        $listing->events[] = $event;
+	                        if (!$recurringdate->unlinked) {
+	                        $event = UNL_UCBCN_Manager::factory('event');
+	                        $event->get($event_id['id']);
+	                        $event->recurrence_id = $recurringdate->recurrence_id;
+	                        $listing->events[] = $event;
+	                    }
                     }
                     if (!$recurring) {
                         $listing->events[] = $event;
@@ -901,6 +905,10 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
             }
             $form->insertElementBefore(HTML_QuickForm::createElement('header', 'eventlocationheader', $msg),
                 'location_id');
+            if (isset($_REQUEST['rec']) && isset($_REQUEST['recid'])) {
+                $form->addElement(HTML_QuickForm::createElement('hidden', 'rec', $_REQUEST['rec']));
+                $form->addElement(HTML_QuickForm::createElement('hidden', 'recid', $_REQUEST['recid']));
+            }
             $renderer = new HTML_QuickForm_Renderer_Tableless();
             $form->accept($renderer);
             if ($form->validate()) {

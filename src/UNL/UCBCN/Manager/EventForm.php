@@ -62,6 +62,10 @@ class UNL_UCBCN_Manager_EventForm
             $form->insertElementBefore(HTML_QuickForm::createElement('header', 'eventlocationheader', 'Event Location, Date and Time'), 'optionaldetailsheader');
             $form->insertElementBefore(HTML_QuickForm::createElement('static', 'datestimes', $this->getRelatedLocationDateAndTimes($events)),
                 'optionaldetailsheader');
+            if (isset($_REQUEST['rec']) && isset($_REQUEST['recid'])) {
+                $form->addElement(HTML_QuickForm::createElement('hidden', 'rec', $_REQUEST['rec']));
+                $form->addElement(HTML_QuickForm::createElement('hidden', 'recid', $_REQUEST['recid']));
+            }
         }
         
         if ($form->isSubmitted() && $form->validate()) {
@@ -159,6 +163,26 @@ class UNL_UCBCN_Manager_EventForm
                     $delete = '<a onclick="return confirm(\'Are you sure?\');" href="'.$this->manager->uri.'?action=eventdatetime&delete='.$edt->id.'">Delete</a>';
                 } else {
                     $delete = '';
+                }
+                // Fix eventdatetime information if this is a recurring event
+                if (isset($_REQUEST['recid'])) {
+                    $rec = UNL_UCBCN::factory('recurringdate');
+                    $rec->event_id = $edt->event_id;
+                    $rec->recurrence_id = $_REQUEST['recid'];
+                    $rec->ongoing = 'FALSE';
+                    $rec->find(true);
+                    $rtime = $rec->recurringdate;
+                    $rec = UNL_UCBCN::factory('recurringdate');
+                    $rec->event_ID = $edt->event_id;
+                    $rec->recurrence_id = 0;
+                    $rec->ongoing = 'FALSE';
+                    $rec->find(true);
+                    $starttime = $rtime.' '.substr($edt->starttime, 11);
+                    $diff = strtotime($rtime) - strtotime($rec->recurringdate);
+                    $edt->starttime = $starttime;
+                    $edt->starttimeu = strtotime($starttime);
+                    $edt->endtime = date('Y-m-d', strtotime(substr($edt->endtime, 0, 10)) + $diff).' '.substr($edt->endtime, 11);
+                    $edt->endtimeu = strtotime($edt->endtime);
                 }
                 if (substr($edt->starttime, 11) != '00:00:00') {
                     $stime .= '<li>'.date('M jS g:ia', $edt->starttimeu).'</li>';
