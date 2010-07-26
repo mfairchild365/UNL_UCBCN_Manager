@@ -40,11 +40,11 @@ foreach ($this->events as $event) {
 			<td class="edit">
 				<?php
 				if ($event['usercaneditevent']) {
-					if ($edt->recurringtype == 'none') {
+					//if ($edt->recurringtype == 'none') {
 						echo '<a href="?action=createEvent&amp;id='.$event['id'].'">Edit</a></td>';
-					} else {
-						echo "<a onclick='showConfirmationDialog(\"{$event['id']}\", \"{$event['recurrence_id']}\");'>Edit</a>";
-					}
+					//} else {
+					//	echo "<a onclick='showConfirmationDialog(\"{$event['id']}\", \"{$event['recurrence_id']}\");'>Edit</a></td>";
+					//}
 				} ?>
 			</td>
 			<td class="delete">
