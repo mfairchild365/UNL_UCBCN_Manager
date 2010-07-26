@@ -44,6 +44,12 @@ foreach ($this->events as $e) {
 	$row .=	'<td class="select"><input type="checkbox" onclick="checknegate('.$e->id.')" name="event'.$e->id.'" /></td>' .
 			'<td class="title">'.htmlspecialchars($e->title).'</td>' .
 			'<td class="date">';
+    if (isset($e->recurrence_id)) {
+		$rec = UNL_UCBCN::factory('recurringdate');
+		$rec->event_id = $e->id;
+		$rec->recurrence_id = $e->recurrence_id;
+		$rec->find(true);
+	}
 	$edt = UNL_UCBCN::factory('eventdatetime');
 	$edt->event_id = $e->id;
 	$edt->orderBy('starttime DESC');
@@ -51,7 +57,12 @@ foreach ($this->events as $e) {
 	if ($instances) {
 		$row .= '<ul>';
 			while ($edt->fetch()) {
-			    $starttime = strtotime($edt->starttime);
+			    if (isset($e->recurrence_id)) {
+			        $starttime = $rec->recurringdate . substr($edt->starttime, 11);
+			        $starttime = strtotime($starttime);
+			    } else {
+			        $starttime = strtotime($edt->starttime);
+			    }
 			    if (date('Y', $starttime) == date('Y')) {
 			        // Date is in current year.
 				    $datestring = date('M jS', $starttime);

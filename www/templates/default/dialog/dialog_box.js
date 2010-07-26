@@ -1,7 +1,7 @@
 // global variables //
 var TIMER = 5;
 var SPEED = 10;
-var WRAPPER = 'wdn_wrapper';
+var WRAPPER = 'contentWrapper';
 var SEARCHFORM = '';
 
 // calculate the current window width //
