@@ -29,6 +29,7 @@
 <?php
 $oddrow = false;
 foreach ($this->events as $e) {
+    $rec = (isset($e->recurrence_id)) ? 'rec'.$e->recurrence_id : '';
 	$row = '<tr id="row'.$e->id.'"';
 	if (isset($_GET['new_event_id']) && $_GET['new_event_id']==$e->id) {
 		if ($oddrow){
@@ -41,7 +42,7 @@ foreach ($this->events as $e) {
 	}
 	$row .= ' onclick="highlightLine(this,'.$e->id.');">';
 	$oddrow = !$oddrow;
-	$row .=	'<td class="select"><input type="checkbox" onclick="checknegate('.$e->id.')" name="event'.$e->id.'" /></td>' .
+	$row .=	'<td class="select"><input type="checkbox" onclick="checknegate('.$e->id.')" name="event'.$e->id.$rec.'" /></td>' .
 			'<td class="title">'.htmlspecialchars($e->title).'</td>' .
 			'<td class="date">';
     if (isset($e->recurrence_id)) {
@@ -81,10 +82,10 @@ foreach ($this->events as $e) {
 	$row .= '</td>' .
 			'<td class="edit">';
 	if (UNL_UCBCN::userCanEditEvent($_SESSION['_authsession']['username'],$e)) {
-		if ($edt->recurringtype == 'none') {
-			$row .= '<a href="?action=createEvent&amp;id='.$e->id.'">Edit</a>';
-		} else {
+		if (isset($e->recurrence_id)) {
 			$row .= "<a onclick='showConfirmationDialog(\"{$e->id}\", \"{$e->recurrence_id}\");'>Edit</a>";
+		} else {
+			$row .= '<a href="?action=createEvent&amp;id='.$e->id.'">Edit</a>';
 		}
 	}
 	$row .=		'</td></tr>';
