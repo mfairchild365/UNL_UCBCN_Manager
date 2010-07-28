@@ -585,14 +585,23 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
     static function getPostedEvents()
     {
         $events = array();
+        $recurring_events = array();
         foreach ($_POST as $key=>$value) {
             $matches = array();
-            if (preg_match('/event([\d]+)/', $key, $matches)) {
+            if (preg_match('/event([\d]+)(?:rec)?([\d]+)?/', $key, $matches)) {
                 $event = UNL_UCBCN::factory('event');
                 if ($event->get($matches[1])) {
+                    if (isset($matches[2])) {
+                        $event->recurrence_id = $matches[2];
+                        unset($_POST[$key]);
+                        $recurring_events['event'.$matches[1]] = $value;
+                    }
                     $events[] =  $event;
                 }
             }
+        }
+        foreach ($recurring_events as $key=>$value) {
+            $_POST[$key] = $value;
         }
         return $events;
     }
@@ -617,6 +626,12 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
                 // This event date time combination was selected... find out what they chose.
                 if (isset($_POST['delete'])
                     && $this->userHasPermission($this->user, 'Event Delete', $this->calendar)) {
+                    if (isset($event->recurrence_id)) {
+                        // it is a recurring event
+	                    $rd = UNL_UCBCN_Manager::factory('recurringdate');
+	                    $rd->removeInstance($event->id, $event->recurrence_id);
+	                    return true;
+	                }
                     // User has chosen to delete the event selected, and has permission to delete the event.
                     if ($a_event->source == 'create event form') {
                         // This is the calendar the event was originally created on, delete from the entire system.
