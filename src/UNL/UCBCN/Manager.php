@@ -628,9 +628,9 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
                     && $this->userHasPermission($this->user, 'Event Delete', $this->calendar)) {
                     if (isset($event->recurrence_id)) {
                         // it is a recurring event
-	                    $rd = UNL_UCBCN_Manager::factory('recurringdate');
-	                    $rd->removeInstance($event->id, $event->recurrence_id);
-	                    return true;
+                        $rd = UNL_UCBCN_Manager::factory('recurringdate');
+                        $rd->removeInstance($event->id, $event->recurrence_id);
+                        return true;
 	                }
                     // User has chosen to delete the event selected, and has permission to delete the event.
                     if ($a_event->source == 'create event form') {
