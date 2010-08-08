@@ -30,9 +30,14 @@ foreach ($this->events as $event) {
 				<div id='instances_<?php echo $event['id']; ?>' class="instances">
 				<ul>
 				<?php
-					while ($edt->fetch()) {
+				while ($edt->fetch()) {
+					$starttime = $edt->starttime;
+					if (substr($starttime, 11) != '00:00:00') {
 						echo '<li>'.date('M jS g:ia',strtotime($edt->starttime)).'</li>';
+					} else {
+						echo '<li>'.date('M jS', strtotime($starttime)).'</li>';
 					}
+				}
 				?>
 				</ul>
 				</div>
