@@ -48,7 +48,16 @@ foreach ($this->events as $event) {
 				<ul>
 				<?php
 					while ($edt->fetch()) {
-						$starttime = strtotime($edt->starttime);
+						if (isset($event['recurrence_id'])) {
+							$rec = UNL_UCBCN::factory('recurringdate');
+							$rec->event_id = $event['id'];
+							$rec->recurrence_id = $event['recurrence_id'];
+							$rec->find(true);
+							$starttime = $rec->recurringdate . substr($edt->starttime, 11);
+							$starttime = strtotime($starttime);
+						} else {
+					    	$starttime = strtotime($edt->starttime);
+						}
 					    if (date('Y', $starttime) == date('Y')) {
 					        // Date is in current year.
 						    $datestring = date('M jS', $starttime);
@@ -77,7 +86,7 @@ foreach ($this->events as $event) {
 			<td class="delete">
 				<?php
 				if ($event['usercandeleteevent']) {
-					echo '<a onclick="return confirm(\'Are you sure you wish to delete '.addslashes(htmlentities($event['title'])).'?\');" href="'.$_SERVER['PHP_SELF'].'?action=search&amp;q='.$_GET['q'].'&amp;delete='.$event['id'].'">Delete</a></td>';
+					echo '<a onclick="return confirm(\'Are you sure you wish to delete '.addslashes(htmlentities($event['title'])).'?\');" href="'.$_SERVER['PHP_SELF'].'?action=search&amp;q='.$_GET['q'].'&amp;delete='.$event['id'].'&amp;rec_id='.$event['recurrence_id'].'">Delete</a></td>';
 				} ?>
 			</td>
 		</tr>

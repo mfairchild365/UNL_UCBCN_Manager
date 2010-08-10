@@ -23,7 +23,7 @@ foreach ($this->events as $event) {
 				if ($event['calendarhasevent']===false) {
 					echo '<input type="checkbox" name="event'.$event['id'].'" />';
 				} else {
-				    echo $event['calendarhasevent'];
+					echo $event['calendarhasevent'];
 				} ?>
 			</td>
 			<td class="title"><span class='title' style="float:left;"><?php echo $event['title']; ?></span>
@@ -31,7 +31,15 @@ foreach ($this->events as $event) {
 				<ul>
 				<?php
 				while ($edt->fetch()) {
-					$starttime = $edt->starttime;
+					if (isset($event['recurrence_id'])) {
+						$rec = UNL_UCBCN::factory('recurringdate');
+						$rec->event_id = $event['id'];
+						$rec->recurrence_id = $event['recurrence_id'];
+						$rec->find(true);
+						$starttime = $rec->recurringdate . substr($edt->starttime, 10);
+					} else {
+						$starttime = $edt->starttime;
+					}
 					if (substr($starttime, 11) != '00:00:00') {
 						echo '<li>'.date('M jS g:ia',strtotime($edt->starttime)).'</li>';
 					} else {
@@ -45,17 +53,17 @@ foreach ($this->events as $event) {
 			<td class="edit">
 				<?php
 				if ($event['usercaneditevent']) {
-					//if ($edt->recurringtype == 'none') {
+					if ($edt->recurringtype == 'none') {
 						echo '<a href="?action=createEvent&amp;id='.$event['id'].'">Edit</a></td>';
-					//} else {
-					//	echo "<a onclick='showConfirmationDialog(\"{$event['id']}\", \"{$event['recurrence_id']}\");'>Edit</a></td>";
-					//}
+					} else {
+						echo "<a onclick='showConfirmationDialog(\"{$event['id']}\", \"{$event['recurrence_id']}\");'>Edit</a>";
+					}
 				} ?>
 			</td>
 			<td class="delete">
 				<?php
 				if ($event['usercandeleteevent']) {
-					echo '<a onclick="return confirm(\'Are you sure you wish to delete '.htmlentities($event['title']).'? \n\nYour event is not automatically deleted from the master calendar. To delete, contact College Communications, communications@cornellcollege.edu, with the name and date of the deleted event.\');" href="'.$_SERVER['PHP_SELF'].'?action=search&amp;q='.$_GET['q'].'&amp;delete='.$event['id'].'">Delete</a></td>';
+					echo '<a onclick="return confirm(\'Are you sure you wish to delete '.htmlentities($event['title']).'? \n\nYour event is not automatically deleted from the master calendar. To delete, contact College Communications, communications@cornellcollege.edu, with the name and date of the deleted event.\');" href="'.$_SERVER['PHP_SELF'].'?action=search&amp;q='.$_GET['q'].'&amp;delete='.$event['id'].'&amp;rec_id='.$event['recurrence_id'].'">Delete</a></td>';
 				} ?>
 			</td>
 		</tr>

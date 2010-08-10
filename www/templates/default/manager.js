@@ -50,7 +50,9 @@ function showConfirmationDialog(event_id, rec_id) {
    var msg = 'This is a recurring event. Would you like to edit:<br />';
    msg    += '<ul><li><a href="'+href1+'">Only this event</a></li>';
    msg    += '<li><a href="'+href2+'">All events in series</a></li>';
-   msg    += '<li><a href="'+href3+'">All following events</a></li>';
+   if (rec_id != 0) {
+      msg += '<li><a href="'+href3+'">All following events</a></li>';
+   }
    msg    += '<li id="cancel"><input type="button" value="Cancel" onclick="hideDialog();" /></li></ul>';
    showDialog('', msg, 'prompt');
 }
