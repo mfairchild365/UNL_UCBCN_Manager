@@ -63,7 +63,11 @@ foreach ($this->events as $event) {
 			<td class="delete">
 				<?php
 				if ($event['usercandeleteevent']) {
-					echo '<a onclick="return confirm(\'Are you sure you wish to delete '.htmlentities($event['title']).'? \n\nYour event is not automatically deleted from the master calendar. To delete, contact College Communications, communications@cornellcollege.edu, with the name and date of the deleted event.\');" href="'.$_SERVER['PHP_SELF'].'?action=search&amp;q='.$_GET['q'].'&amp;delete='.$event['id'].'&amp;rec_id='.$event['recurrence_id'].'">Delete</a></td>';
+				    $delete_url = $_SERVER['PHP_SELF'].'?action=search&amp;q='.$_GET['q'].'&amp;delete='.$event['id'];
+				    if (isset($event['recurrence_id'])) {
+				        $delete_url .= '&amp;rec_id='.$event['recurrence_id'];
+				    }
+					echo '<a onclick="return confirm(\'Are you sure you wish to delete '.htmlentities($event['title']).'? \n\nYour event is not automatically deleted from the master calendar. To delete, contact College Communications, communications@cornellcollege.edu, with the name and date of the deleted event.\');" href="'.$delete_url.'">Delete</a></td>';
 				} ?>
 			</td>
 		</tr>
