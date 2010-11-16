@@ -118,20 +118,26 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
     {
         $this->output[] = '<p class="sec_main">Facebook Integration Manager</p>' .
                 '<p>Use this tool to register a calander with a facebook account and to change options.</p>';
-        if ($this->me) {
-            $this->output[] = "<img src='http://graph.facebook.com/".$this->me['id']."/picture'>";
-            $this->output[] = "Welcome, " . $this->me['name'] . "<br>";
-            $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->logoutUrl}'>logout of facebook</a><br><hr>";
-            if (!isset($_GET['authorize'])) {
-                $this->output[] = "<a href='{$this->uri}&authorize=true'>Use this facebook account for this calendar</a><br>";
+        if ($this->facebookAccount->createEvents()) {
+            if ($this->me) {
+                $this->output[] = "<img src='http://graph.facebook.com/".$this->me['id']."/picture'>";
+                $this->output[] = "Welcome, " . $this->me['name'] . "<br>";
+                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->logoutUrl}'>logout of facebook</a><br><hr>";
+                if (!isset($_GET['authorize'])) {
+                    $this->output[] = "<a href='{$this->uri}&authorize=true'>Use this facebook account for this calendar</a><br>";
+                }
+            } else {
+                $url = urlencode(UNL_UCBCN_FacebookInstance::getURL()."&");
+                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='https://graph.facebook.com/oauth/authorize?client_id={$this->config['appID']}&redirect_uri=$url&scope=rsvp_event,user_events,create_event,offline_access'>Log Into Facebook</a><br>";
+            }
+            $this->output[] = "<a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a><br>";
+            if (isset($_GET['submit'])) {
+                $this->doEdit();
             }
         } else {
-            $url = urlencode(UNL_UCBCN_FacebookInstance::getURL()."&");
-            $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='https://graph.facebook.com/oauth/authorize?client_id={$this->config['appID']}&redirect_uri=$url&scope=rsvp_event,user_events,create_event,offline_access'>Log Into Facebook</a><br>";
-        }
-        $this->output[] = "<a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a><br>";
-        if (isset($_GET['submit'])) {
-            $this->doEdit();
+            $this->output[] = "<h2>Setting up facebook: </h2>";
+            $this->output[] = "There are a few things that you need to do before you can use this delightful feature.
+                                Please follow this link to find out how to get started.";
         }
         if (isset($_GET['authorize'])) {
             $this->facebookAuthorize();
@@ -140,10 +146,21 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         } else {
             $action = 'start';
         }
-        
-        $this->output[] = "Create events is currently set to: {$this->facebookAccount->create_events}<br>";
-        $this->output[] = "<strong>Events will be created: {$this->facebookAccount->createEvents()}</strong><br>";
-        switch($action)
+        $this->output[] = "<hr>";
+        $this->output[] = "Create events is currently set to: ";
+        if ($this->facebookAccount->create_events) {
+            $this->output[] = "True<br>";
+        } else {
+            $this->output[] = "False<br>";
+        }
+        $this->output[] = "<strong>Events will be created: ";
+        if ($this->facebookAccount->createEvents()) {
+            $this->output[] = "True";
+        } else {
+            $this->output[] = "False";
+        }
+        $this->output[] = "</strong><br>";
+        switch( $action )
         {
         case 'start':
             break;
