@@ -96,6 +96,7 @@ if (isset($this->user)) {
                     <li><a href="<?php echo $this->uri; ?>?action=account">Account Info</a></li>
                     <li><a href="<?php echo $this->uri; ?>?action=calendar">Calendar Info</a></li>
                     <li><a href="<?php echo $this->uri; ?>?action=users">Users &amp; Permissions</a></li>
+                    <li><a href="<?php echo $this->uri; ?>?logout=true">LogOut</a></li>
                     </ul>
                 </div>
                 <?php
