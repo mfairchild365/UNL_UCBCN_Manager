@@ -161,11 +161,16 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
     {
         global $_UNL_UCBCN;
         $ds         = DIRECTORY_SEPARATOR;
-        $plugin_dir = '@PHP_DIR@'.$ds.'UNL'.$ds.'UCBCN'.$ds.'Manager'.$ds.'Plugins';
+        if ('@PHP_DIR@' == '@'.'PHP_DIR@') {
+            // We're running from an SVN checkout, and not an install
+            $plugin_dir = dirname(__FILE__).$ds.'Manager'.$ds.'Plugins';
+        } else {
+            $plugin_dir = '@PHP_DIR@'.$ds.'UNL'.$ds.'UCBCN'.$ds.'Manager'.$ds.'Plugins';
+        }
         if (is_dir($plugin_dir)) {
             if ($handle = opendir($plugin_dir)) {
                 while (false !== ($file = readdir($handle))) {
-                    if ($file != '.' && $file != '..') {
+                    if ($file != '.' && $file != '..' && substr($file, -4) == '.php') {
                         include_once $plugin_dir.$ds.$file;
                     }
                 }
