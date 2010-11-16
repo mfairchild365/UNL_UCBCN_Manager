@@ -46,6 +46,7 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
     public $logoutUrl;
     public $loginUrl;
     public $session;
+    private $config;
     
     /** startup
      * Initializes all variables for the class on when the class is loaded by the manager.
@@ -125,7 +126,8 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
                 $this->output[] = "<a href='{$this->uri}&authorize=true'>Use this facebook account for this calendar</a><br>";
             }
         } else {
-            $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->loginUrl}&scope=rsvp_event,user_events,create_event,offline_access'>Log Into Facebook</a><br>";
+            $url = urlencode(UNL_UCBCN_FacebookInstance::getURL()."&");
+            $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='https://graph.facebook.com/oauth/authorize?client_id={$this->config['appID']}&redirect_uri=$url&scope=rsvp_event,user_events,create_event,offline_access'>Log Into Facebook</a><br>";
         }
         $this->output[] = "<a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a><br>";
         if (isset($_GET['submit'])) {
