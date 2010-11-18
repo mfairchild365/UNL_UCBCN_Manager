@@ -86,7 +86,7 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         <script>
             window.fbAsyncInit = function() {
                 FB.init({
-                    appId   : '{$this->facebookInterface->getAppId()}',
+                    appId   : '{$this->config['appID']}',
                     session : ".json_encode($this->session).", // don't refetch the session when PHP already has it
                     status  : true, // check login status
                     cookie  : true, // enable cookies to allow the server to access the session
@@ -118,7 +118,7 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
     {
         $this->output[] = '<p class="sec_main">Facebook Integration Manager</p>' .
                 '<p>Use this tool to register a calander with a facebook account and to change options.</p>';
-        if ($this->facebookAccount->createEvents()) {
+        if (UNL_UCBCN_FacebookInstance::getConfig() ) {
             if ($this->me) {
                 $this->output[] = "<img src='http://graph.facebook.com/".$this->me['id']."/picture'>";
                 $this->output[] = "Welcome, " . $this->me['name'] . "<br>";
@@ -138,6 +138,7 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
             $this->output[] = "<h2>Setting up facebook: </h2>";
             $this->output[] = "There are a few things that you need to do before you can use this delightful feature.
                                 Please follow this link to find out how to get started.";
+            //  http://developers.facebook.com/setup/
         }
         if (isset($_GET['authorize'])) {
             $this->facebookAuthorize();
@@ -208,13 +209,21 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         $form = new HTML_QuickForm('UNL_UCBCN_Manager_FacebookIntegration', 'get', $this->uri);
         $form->addElement('hidden', 'action', 'plugin');
         $form->addElement('hidden', 'p', 'UNL_UCBCN_Manager_FacebookIntegration');
+        //Create Events Option:
         $createEvents = $form->createElement('advcheckbox', 'createEvents', 'Create Events');
         if ($this->facebookAccount->create_events) {
             $createEvents->setChecked(true);
         } else {
             $createEvents->setChecked(false);
         }
-        $form->addElement($createEvents);
+        $showLike = $form->createElement('advcheckbox', 'showLike', 'Show Like Buttons');
+        if ($this->facebookAccount->show_like_buttons) {
+            $showLike->setChecked(true);
+        } else {
+            $showLike->setChecked(false);
+        }
+        $form->addElement($showLike);
+        //Show like Button Options:
         $form->addElement('submit', 'submit', 'Submit');
         
         return $form->toHtml();
@@ -228,6 +237,7 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
     public function doEdit()
     {
         $this->facebookAccount->create_events = $_GET['createEvents'];
+        $this->facebookAccount->show_like_buttons = $_GET['shlowLike'];
         $this->facebookAccount->update();
     }
     
