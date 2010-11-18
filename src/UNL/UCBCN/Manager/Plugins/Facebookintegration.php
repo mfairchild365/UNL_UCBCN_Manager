@@ -137,23 +137,32 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         } else {
             $this->output[] = "<h2>Setting up facebook: </h2>";
             $this->output[] = "There are a few things that you need to do before you can use this delightful feature.
-                                Please follow this link to find out how to get started.";
+                                Please follow these instructions to get started...<br>
+                              <ol>
+                                  <li>Create a PHP file in your root directory named 'config.inc.php'.  There should already be a file
+                                      in that directory called 'config.sample.inc.php'.  For an example of how to use the file that you just made
+                                      open that file and read it.  The next few instructions will guide you though editing the 'config.inc.php'
+                                  <li>
+                                      Go to <a href='http://developers.facebook.com/setup/'>Facebook</a> and create an application.
+                                      <ol>
+                                          <li>For 'Site name:' Put in the name of this site.</li>
+                                          <li>For 'Site URL:' Put in the url for this site: 'http://".$_SERVER["SERVER_NAME"]."/?'</li>
+                                      </ol>
+                                      </li>
+                                  <li>Complete the security check if needed.</li>
+                                  <li>A results page will show your App Id and App Secret
+                                      <ol>
+                                      <li>Copy the 'App ID:' to config.inc.php replacing the value of \$fb_appId (ex: \$fb_appId = xxxxxxxxxx)</li>
+                                      <li>Copy the 'App Secret:' to config.inc.php replacing the value of \$fb_secret (ex: \$fb_secret = 'xxxxxxxxxx')</li>
+                                      </ol>
+                                  </li>
+                                  <li>Reload this page.  If you entered the correct values, you can then authorize a facebook account.</li>
+                              </ol>";
             //  http://developers.facebook.com/setup/
         }
-        $this->output[] = "<hr>";
-        $this->output[] = "Create events is currently set to: ";
-        if ($this->facebookAccount->create_events) {
-            $this->output[] = "True<br>";
-        } else {
-            $this->output[] = "False<br>";
-        }
-        $this->output[] = "<strong>Events will be created: ";
-        if ($this->facebookAccount->createEvents()) {
-            $this->output[] = "True";
-        } else {
-            $this->output[] = "False";
-        }
-        $this->output[] = "</strong><br>";
+        
+        $this->showStatus();
+        
         if (isset($_GET['authorize'])) {
             $action = 'authorize';
         } else if (isset($_GET['edit'])) {
@@ -200,6 +209,34 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
             $this->output[] = "Facebook account id: {$this->facebookAccount->facebook_account}<br>";
             $this->output[] = "Facebook access_token: {$this->facebookAccount->access_token}<br><hr>";
         }
+    }
+    
+    /** showStatus
+     * Displays the status of the facebook integration.  Show Like Buttons, create events, etc.
+     * 
+     * @return void
+     **/
+    function showStatus(){
+        $this->output[] = "<hr>";
+        $this->output[] = "Create events is currently set to: ";
+        if ($this->facebookAccount->create_events) {
+            $this->output[] = "True<br>";
+        } else {
+            $this->output[] = "False<br>";
+        }
+        $this->output[] = "Show Like Buttons is currently set to: ";
+        if ($this->facebookAccount->show_like_buttons) {
+            $this->output[] = "True<br>";
+        } else {
+            $this->output[] = "False<br>";
+        }
+        $this->output[] = "<strong>Events will be created: ";
+        if ($this->facebookAccount->createEvents()) {
+            $this->output[] = "True";
+        } else {
+            $this->output[] = "False";
+        }
+        $this->output[] = "</strong><br>";
     }
     
     /** showEdit
