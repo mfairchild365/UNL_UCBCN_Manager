@@ -46,7 +46,7 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
     public $logoutUrl;
     public $loginUrl;
     public $session;
-    private $config;
+    public $config;
     
     /** startup
      * Initializes all variables for the class on when the class is loaded by the manager.
@@ -158,7 +158,6 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
                                   </li>
                                   <li>Reload this page.  If you entered the correct values, you can then authorize a facebook account.</li>
                               </ol>";
-            //  http://developers.facebook.com/setup/
         }
         
         $this->showStatus();
@@ -216,7 +215,8 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
      * 
      * @return void
      **/
-    function showStatus(){
+    function showStatus()
+    {
         $this->output[] = "<hr>";
         $this->output[] = "Create events is currently set to: ";
         if ($this->facebookAccount->create_events) {
