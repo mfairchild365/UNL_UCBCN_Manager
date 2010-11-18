@@ -122,19 +122,16 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
             if ($this->me) {
                 $this->output[] = "<img src='http://graph.facebook.com/".$this->me['id']."/picture'>";
                 $this->output[] = "Welcome, " . $this->me['name'] . "<br>";
-                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a> | <a href='{$this->logoutUrl}'>logout of facebook</a><br><hr>";
+                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a> | <a href='{$this->logoutUrl}'>logout of facebook</a><br><hr>";
                 if (!isset($_GET['authorize'])) {
                     $this->output[] = "<a href='{$this->uri}&authorize=true'>Use this facebook account for this calendar</a><br>";
                 }
             } else {
                 $url = urlencode(UNL_UCBCN_FacebookInstance::getURL()."&");
-                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a> | <a href='https://graph.facebook.com/oauth/authorize?client_id={$this->config['appID']}&redirect_uri=$url&scope=rsvp_event,user_events,create_event,offline_access'>Log Into Facebook</a><br>";
-            }
-            $this->output[] = "<a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a><br>";
-            if (isset($_GET['submit'])) {
-                $this->doEdit();
+                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a> | <a href='https://graph.facebook.com/oauth/authorize?client_id={$this->config['appID']}&redirect_uri=$url&scope=rsvp_event,user_events,create_event,offline_access'>Log Into Facebook</a><br>";
             }
         } else {
+            $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a>";
             $this->output[] = "<h2>Setting up facebook: </h2>";
             $this->output[] = "There are a few things that you need to do before you can use this delightful feature.
                                 Please follow these instructions to get started...<br>
@@ -159,7 +156,9 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
                                   <li>Reload this page.  If you entered the correct values, you can then authorize a facebook account.</li>
                               </ol>";
         }
-        
+        if (isset($_GET['submit'])) {
+            $this->doEdit();
+         }
         $this->showStatus();
         
         if (isset($_GET['authorize'])) {
@@ -273,14 +272,16 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         $form = new HTML_QuickForm('UNL_UCBCN_Manager_FacebookIntegration', 'get', $this->uri);
         $form->addElement('hidden', 'action', 'plugin');
         $form->addElement('hidden', 'p', 'UNL_UCBCN_Manager_FacebookIntegration');
-        //Create Events Option:
-        $createEvents = $form->createElement('advcheckbox', 'createEvents', 'Create Events');
-        if ($this->facebookAccount->create_events) {
-            $createEvents->setChecked(true);
-        } else {
-            $createEvents->setChecked(false);
+        //Only give options if a facebook app has been added.
+        if (UNL_UCBCN_FacebookInstance::getConfig() ) {
+            $createEvents = $form->createElement('advcheckbox', 'createEvents', 'Create Events');
+            if ($this->facebookAccount->create_events) {
+                $createEvents->setChecked(true);
+            } else {
+                $createEvents->setChecked(false);
+            }
+            $form->addElement($createEvents);
         }
-        $form->addElement($createEvents);
         
         //Show Like Button Options:
         $showLike = $form->createElement('advcheckbox', 'showLike', 'Show Like Buttons');
@@ -302,7 +303,10 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
      **/
     public function doEdit()
     {
-        $this->facebookAccount->create_events = $_GET['createEvents'];
+        //Only allow edits if a facebook app has been added.
+        if (UNL_UCBCN_FacebookInstance::getConfig() ) {
+            $this->facebookAccount->create_events = $_GET['createEvents'];
+        }
         $this->facebookAccount->show_like_buttons = $_GET['showLike'];
         $this->facebookAccount->update();
     }
