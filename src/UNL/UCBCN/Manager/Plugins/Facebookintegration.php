@@ -122,13 +122,13 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
             if ($this->me) {
                 $this->output[] = "<img src='http://graph.facebook.com/".$this->me['id']."/picture'>";
                 $this->output[] = "Welcome, " . $this->me['name'] . "<br>";
-                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->logoutUrl}'>logout of facebook</a><br><hr>";
+                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a> | <a href='{$this->logoutUrl}'>logout of facebook</a><br><hr>";
                 if (!isset($_GET['authorize'])) {
                     $this->output[] = "<a href='{$this->uri}&authorize=true'>Use this facebook account for this calendar</a><br>";
                 }
             } else {
                 $url = urlencode(UNL_UCBCN_FacebookInstance::getURL()."&");
-                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='https://graph.facebook.com/oauth/authorize?client_id={$this->config['appID']}&redirect_uri=$url&scope=rsvp_event,user_events,create_event,offline_access'>Log Into Facebook</a><br>";
+                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a> | <a href='https://graph.facebook.com/oauth/authorize?client_id={$this->config['appID']}&redirect_uri=$url&scope=rsvp_event,user_events,create_event,offline_access'>Log Into Facebook</a><br>";
             }
             $this->output[] = "<a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a><br>";
             if (isset($_GET['submit'])) {
@@ -166,6 +166,8 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
             $action = 'authorize';
         } else if (isset($_GET['edit'])) {
             $action = 'edit';
+        } else if (isset($_GET['FAQ'])) {
+            $action = 'faq';
         } else {
             $action = 'start';
         }
@@ -176,6 +178,9 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         case 'authorize':
             $this->output[] = $this->facebookAuthorize();
             break;
+        case 'faq':
+            $this->output[] = $this->showFAQ();
+            break;
         case 'edit':
             $this->output[] = $this->showEdit();
             break;
@@ -185,6 +190,25 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         default:
             //$this->output[] = $this->showChooseDateForm();
         }
+    }
+    
+    /** showFAQ
+     * Shows a FAQ about the facebook integration.
+     * 
+     * @return void
+     **/
+    public function showFAQ()
+    {
+        $this->output[] = "<h2>FAQ</h2>";
+        $this->output[] = "<ol>
+                           <li><strong>Q: How does Facebook Integration work?</strong> A: After you properly set up the integration and enable creation of facebook events, a new facebook event will be created for 
+                               for each instance of the event on the authorized facebook account.  Users can then view the event on facebook, RSVP and invite friends.  While viewing the event in this event system
+                               a user will be able to RSVP to an event.  Facebook events will only be created after integration has been set up, there for events made prior to the integration will not be added
+                               to facebook unless you update each event.</li>
+                           <li><strong>Q: Why arn't recurring events Created?</strong> A: Facebook does not currently support recurring events.</li>
+                           <li><strong>Q: How do I enable the integration?</strong> A: First you need to create a facebook app, then you need to authorize a facebook account for the calendar that you wish to integrate.</li>
+                           <li><strong>Q: Do I need to create a facebook app to enable Like Buttons?</strong> A: No, like buttons do not require a facebook app.</li>
+                           </ol>";
     }
     
     /** facebookAuthorize
