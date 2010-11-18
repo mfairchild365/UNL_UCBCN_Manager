@@ -140,13 +140,6 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
                                 Please follow this link to find out how to get started.";
             //  http://developers.facebook.com/setup/
         }
-        if (isset($_GET['authorize'])) {
-            $this->facebookAuthorize();
-        } else if (isset($_GET['edit'])) {
-            $action = 'edit';
-        } else {
-            $action = 'start';
-        }
         $this->output[] = "<hr>";
         $this->output[] = "Create events is currently set to: ";
         if ($this->facebookAccount->create_events) {
@@ -161,6 +154,13 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
             $this->output[] = "False";
         }
         $this->output[] = "</strong><br>";
+        if (isset($_GET['authorize'])) {
+            $action = 'authorize';
+        } else if (isset($_GET['edit'])) {
+            $action = 'edit';
+        } else {
+            $action = 'start';
+        }
         switch( $action )
         {
         case 'start':
@@ -170,6 +170,9 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
             break;
         case 'edit':
             $this->output[] = $this->showEdit();
+            break;
+        case 'authorize':
+            $this->facebookAuthorize();
             break;
         default:
             //$this->output[] = $this->showChooseDateForm();
@@ -216,6 +219,9 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         } else {
             $createEvents->setChecked(false);
         }
+        $form->addElement($createEvents);
+        
+        //Show Like Button Options:
         $showLike = $form->createElement('advcheckbox', 'showLike', 'Show Like Buttons');
         if ($this->facebookAccount->show_like_buttons) {
             $showLike->setChecked(true);
@@ -223,7 +229,6 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
             $showLike->setChecked(false);
         }
         $form->addElement($showLike);
-        //Show like Button Options:
         $form->addElement('submit', 'submit', 'Submit');
         
         return $form->toHtml();
@@ -237,7 +242,7 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
     public function doEdit()
     {
         $this->facebookAccount->create_events = $_GET['createEvents'];
-        $this->facebookAccount->show_like_buttons = $_GET['shlowLike'];
+        $this->facebookAccount->show_like_buttons = $_GET['showLike'];
         $this->facebookAccount->update();
     }
     
