@@ -121,11 +121,9 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         if (UNL_UCBCN_FacebookInstance::getConfig() ) {
             if ($this->me) {
                 $this->output[] = "<img src='http://graph.facebook.com/".$this->me['id']."/picture'>";
-                $this->output[] = "Welcome, " . $this->me['name'] . "<br>";
-                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a> | <a href='{$this->logoutUrl}'>logout of facebook</a><br><hr>";
-                if (!isset($_GET['authorize'])) {
-                    $this->output[] = "<a href='{$this->uri}&authorize=true'>Use this facebook account for this calendar</a><br>";
-                }
+                $this->output[] = "Welcome, " . $this->me['name'] . " (<a href='{$this->logoutUrl}'>logout of facebook</a>)<br>";
+                $url = urlencode(UNL_UCBCN_FacebookInstance::getURL()."&authorize=true");
+                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a> | <a href='https://graph.facebook.com/oauth/authorize?client_id={$this->config['appID']}&redirect_uri=$url&scope=rsvp_event,user_events,create_event,offline_access,manage_pages'>Authorize facebook account for this calendar</a><br><hr>";
             } else {
                 $url = urlencode(UNL_UCBCN_FacebookInstance::getURL()."&");
                 $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a> | <a href='https://graph.facebook.com/oauth/authorize?client_id={$this->config['appID']}&redirect_uri=$url&scope=rsvp_event,user_events,create_event,offline_access,manage_pages'>Log Into Facebook</a><br>";
@@ -158,7 +156,7 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         }
         if (isset($_POST['submit'])) {
             $this->doEdit();
-         }
+        }
         $this->showStatus();
         
         if (isset($_GET['authorize'])) {
@@ -207,6 +205,8 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
                            <li><strong>Q: Why arn't recurring events Created?</strong> A: Facebook does not currently support recurring events.</li>
                            <li><strong>Q: How do I enable the integration?</strong> A: First you need to create a facebook app, then you need to authorize a facebook account for the calendar that you wish to integrate.</li>
                            <li><strong>Q: Do I need to create a facebook app to enable Like Buttons?</strong> A: No, like buttons do not require a facebook app.</li>
+                           <li><strong>Q: How do I set up the Facebook Integration to post to a page, rather than my account?</strong> A: First, go <a href='http://www.facebook.com/pages/create.php'>here</a> to create a facebook page.  
+                               Then, go to the Facebook Integration Settings and select the page from the drop down list. Note that you must be logged into the facebook account associated with this calendar in order to select your page.</li>
                            </ol>";
     }
     
@@ -240,7 +240,7 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
      **/
     function showStatus()
     {
-        $this->output[] = "<hr><ul>";
+        $this->output[] = "<ul>";
         $this->output[] = "<li>Create events is currently set to: ";
         if ($this->facebookAccount->create_events) {
             $this->output[] = "True</li>";
@@ -287,11 +287,11 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
                 $createEvents->setChecked(false);
             }
             $form->addElement($createEvents);
-            if (isset($this->facebookAccount->facebook_account) && isset($this->facebookAccount->access_token) ){
-                $s = $form->createElement('select','page_name','Page: ');
+            if (isset($this->facebookAccount->facebook_account) && isset($this->facebookAccount->access_token)) {
+                $s = $form->createElement('select', 'page_name', 'Page: ');
                 $result = $this->facebookInterface->api(
                     '/'.$this->facebookAccount->facebook_account.'/accounts?access_token='.$this->facebookAccount->access_token,
-                        array('access_token' => $this->facebookAccount->access_token)
+                    array('access_token' => $this->facebookAccount->access_token)
                 );
                 $opts['profile'] = $this->me['name'];
                 for ($i=0; $i<count($result['data']); $i++) {
@@ -302,7 +302,7 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
                 if (isset($this->facebookAccount->page_name)) {
                     $s->loadArray($opts, $this->facebookAccount->page_name);
                 } else {
-                    $s->loadArray($opts,'profile');
+                    $s->loadArray($opts, 'profile');
                 }
                 $form->addElement($s);
             }
@@ -331,9 +331,9 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         //Only allow edits if a facebook app has been added.
         if (UNL_UCBCN_FacebookInstance::getConfig() ) {
             $this->facebookAccount->create_events = $_POST['createEvents'];
-            if($_POST['page_name'] == 'profile'){
+            if ($_POST['page_name'] == 'profile') {
                 $newName = "";
-            }else{
+            } else {
                 $newName = $_POST['page_name'];
             }
             $this->facebookAccount->page_name = $newName;
