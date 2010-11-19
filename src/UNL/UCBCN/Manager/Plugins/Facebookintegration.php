@@ -128,7 +128,7 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
                 }
             } else {
                 $url = urlencode(UNL_UCBCN_FacebookInstance::getURL()."&");
-                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a> | <a href='https://graph.facebook.com/oauth/authorize?client_id={$this->config['appID']}&redirect_uri=$url&scope=rsvp_event,user_events,create_event,offline_access'>Log Into Facebook</a><br>";
+                $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a> | <a href='https://graph.facebook.com/oauth/authorize?client_id={$this->config['appID']}&redirect_uri=$url&scope=rsvp_event,user_events,create_event,offline_access,manage_pages'>Log Into Facebook</a><br>";
             }
         } else {
             $this->output[] = "<a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration'>Integration Home</a> | <a href='{$this->uri}&edit=true'>Edit Settings for this calendar</a> | <a href='index.php?action=plugin&p=UNL_UCBCN_Manager_FacebookIntegration&FAQ=true'>FAQ</a>";
@@ -156,7 +156,7 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
                                   <li>Reload this page.  If you entered the correct values, you can then authorize a facebook account.</li>
                               </ol>";
         }
-        if (isset($_GET['submit'])) {
+        if (isset($_POST['submit'])) {
             $this->doEdit();
          }
         $this->showStatus();
@@ -240,26 +240,32 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
      **/
     function showStatus()
     {
-        $this->output[] = "<hr>";
-        $this->output[] = "Create events is currently set to: ";
+        $this->output[] = "<hr><ul>";
+        $this->output[] = "<li>Create events is currently set to: ";
         if ($this->facebookAccount->create_events) {
-            $this->output[] = "True<br>";
+            $this->output[] = "True</li>";
         } else {
-            $this->output[] = "False<br>";
+            $this->output[] = "False</li>";
         }
-        $this->output[] = "Show Like Buttons is currently set to: ";
+        $this->output[] = "<li>Show Like Buttons is currently set to: ";
         if ($this->facebookAccount->show_like_buttons) {
-            $this->output[] = "True<br>";
+            $this->output[] = "True</li>";
         } else {
-            $this->output[] = "False<br>";
+            $this->output[] = "False</li>";
         }
-        $this->output[] = "<strong>Events will be created: ";
+        $this->output[] = "<li>New Events will be added to:";
+        if ($this->facebookAccount->page_name) {
+            $this->output[] = "<strong> {$this->facebookAccount->page_name} </strong></li>";
+        } else {
+            $this->output[] = "<strong> The Authroized Account's Profile </strong></li>";
+        }
+        $this->output[] = "<li><strong>Events will be created: ";
         if ($this->facebookAccount->createEvents()) {
-            $this->output[] = "True";
+            $this->output[] = "True</li>";
         } else {
-            $this->output[] = "False";
+            $this->output[] = "False</li>";
         }
-        $this->output[] = "</strong><br>";
+        $this->output[] = "</strong></ul><hr>";
     }
     
     /** showEdit
@@ -269,9 +275,9 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
      **/
     public function showEdit()
     {
-        $form = new HTML_QuickForm('UNL_UCBCN_Manager_FacebookIntegration', 'get', $this->uri);
+        $url= html_entity_decode($this->uri);
+        $form = new HTML_QuickForm('UNL_UCBCN_Manager_FacebookIntegration', 'post', $url);
         $form->addElement('hidden', 'action', 'plugin');
-        $form->addElement('hidden', 'p', 'UNL_UCBCN_Manager_FacebookIntegration');
         //Only give options if a facebook app has been added.
         if (UNL_UCBCN_FacebookInstance::getConfig() ) {
             $createEvents = $form->createElement('advcheckbox', 'createEvents', 'Create Events');
@@ -281,6 +287,25 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
                 $createEvents->setChecked(false);
             }
             $form->addElement($createEvents);
+            if (isset($this->facebookAccount->facebook_account) && isset($this->facebookAccount->access_token) ){
+                $s = $form->createElement('select','page_name','Page: ');
+                $result = $this->facebookInterface->api(
+                    '/'.$this->facebookAccount->facebook_account.'/accounts?access_token='.$this->facebookAccount->access_token,
+                        array('access_token' => $this->facebookAccount->access_token)
+                );
+                $opts['profile'] = $this->me['name'];
+                for ($i=0; $i<count($result['data']); $i++) {
+                    if (isset($result['data'][$i]['name'])) {
+                        $opts[$result['data'][$i]['name']] = $result['data'][$i]['name'];
+                    }
+                }
+                if (isset($this->facebookAccount->page_name)) {
+                    $s->loadArray($opts, $this->facebookAccount->page_name);
+                } else {
+                    $s->loadArray($opts,'profile');
+                }
+                $form->addElement($s);
+            }
         }
         
         //Show Like Button Options:
@@ -305,10 +330,17 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
     {
         //Only allow edits if a facebook app has been added.
         if (UNL_UCBCN_FacebookInstance::getConfig() ) {
-            $this->facebookAccount->create_events = $_GET['createEvents'];
+            $this->facebookAccount->create_events = $_POST['createEvents'];
+            if($_POST['page_name'] == 'profile'){
+                $newName = "";
+            }else{
+                $newName = $_POST['page_name'];
+            }
+            $this->facebookAccount->page_name = $newName;
         }
-        $this->facebookAccount->show_like_buttons = $_GET['showLike'];
+        $this->facebookAccount->show_like_buttons = $_POST['showLike'];
         $this->facebookAccount->update();
+        $this->output[] = "<h2>Settings have been updated</h2>";
     }
     
 }
