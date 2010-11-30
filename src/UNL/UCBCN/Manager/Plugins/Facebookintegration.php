@@ -280,7 +280,8 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         $form->addElement('hidden', 'action', 'plugin');
         //Only give options if a facebook app has been added.
         if (UNL_UCBCN_FacebookInstance::getConfig() ) {
-            if (isset($this->facebookAccount->facebook_account) && isset($this->facebookAccount->access_token)) {
+            if (isset($this->facebookAccount->facebook_account) && $this->facebookAccount->facebook_account != 0 
+                && isset($this->facebookAccount->access_token) && $this->facebookAccount->access_token != 0) {
                 try{
                     $createEvents = $form->createElement('advcheckbox', 'createEvents', 'Create Events');
                     $createEvents->setChecked(true);
