@@ -281,27 +281,33 @@ class UNL_UCBCN_Manager_FacebookIntegration extends UNL_UCBCN_Manager_Plugin
         //Only give options if a facebook app has been added.
         if (UNL_UCBCN_FacebookInstance::getConfig() ) {
             if (isset($this->facebookAccount->facebook_account) && isset($this->facebookAccount->access_token)) {
-                $createEvents = $form->createElement('advcheckbox', 'createEvents', 'Create Events');
-                $createEvents->setChecked(true);
-                $createEvents->setChecked(false);
-            $form->addElement($createEvents);
-                $s = $form->createElement('select', 'page_name', 'Page: ');
-                $result = $this->facebookInterface->api(
-                    '/'.$this->facebookAccount->facebook_account.'/accounts?access_token='.$this->facebookAccount->access_token,
-                    array('access_token' => $this->facebookAccount->access_token)
-                );
-                $opts['profile'] = $this->me['name'];
-                for ($i=0; $i<count($result['data']); $i++) {
-                    if (isset($result['data'][$i]['name'])) {
-                        $opts[$result['data'][$i]['name']] = $result['data'][$i]['name'];
+                try{
+                    $createEvents = $form->createElement('advcheckbox', 'createEvents', 'Create Events');
+                    $createEvents->setChecked(true);
+                    $createEvents->setChecked(false);
+                    $form->addElement($createEvents);
+                    $s = $form->createElement('select', 'page_name', 'Page: ');
+                    $result = $this->facebookInterface->api(
+                        '/'.$this->facebookAccount->facebook_account.'/accounts?access_token='.$this->facebookAccount->access_token,
+                        array('access_token' => $this->facebookAccount->access_token)
+                    );
+                    $opts['profile'] = $this->me['name'];
+                    for ($i=0; $i<count($result['data']); $i++) {
+                        if (isset($result['data'][$i]['name'])) {
+                            $opts[$result['data'][$i]['name']] = $result['data'][$i]['name'];
+                        }
                     }
+                    if (isset($this->facebookAccount->page_name)) {
+                        $s->loadArray($opts, $this->facebookAccount->page_name);
+                    } else {
+                        $s->loadArray($opts, 'profile');
+                    }
+                    $form->addElement($s);
+                } catch (FacebookApiException $e) {
+                    error_log($e);
+                    $this->output[] = "You have not authorized an account yet.  Please authorize an account
+                                        for this calendar to view more options.";
                 }
-                if (isset($this->facebookAccount->page_name)) {
-                    $s->loadArray($opts, $this->facebookAccount->page_name);
-                } else {
-                    $s->loadArray($opts, 'profile');
-                }
-                $form->addElement($s);
             }
         }
         
