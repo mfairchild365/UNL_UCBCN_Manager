@@ -888,12 +888,19 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
                 if ($additional) {
                     //verify the shortname;
                     $shortname = $form->getElement('shortname')->getValue();
+                    ///ensure that it is valid.
+                    $match = preg_match('/[^0-9a-z]/',$shortname);
+                    if($match){
+                        $valid = false;
+                        $msg .= '<p>That short name is not valid.  Must be only numbers and/or lowercase letters...</p>';
+                    }
+                    ///ensure that it is not already used.
                     $c = new UNL_UCBCN_Calendar();
                     $c->shortname = $shortname;
                     $count = $c->find();
                     if ($count) {
                         $valid = false;
-                        $msg = '<p>That short name is already being used.</p>';
+                        $msg .= '<p>That short name is already being used.</p>';
                     }
                 }
                 if ($valid) {
@@ -1122,11 +1129,11 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
         $form       = new HTML_QuickForm('cal_choose', 'get');
         $cal_select = HTML_QuickForm::createElement('select', 'calendar_id', '');
         $cal_select->addOption('Choose your calendar', $_SESSION['calendar_id']);
+        //Add new cal
+        $cal_select->addOption('Add a new calendar', 'new');
         while ($row = $res->fetchRow()) {
             $cal_select->addOption($row[1], $row[0]);
         }
-        //Add new cal
-        $cal_select->addOption('New Calendar', 'new');
         $form->addElement($cal_select);
         $form->addElement('submit', 'submit', 'Go');
         $renderer = new HTML_QuickForm_Renderer_Tableless();
