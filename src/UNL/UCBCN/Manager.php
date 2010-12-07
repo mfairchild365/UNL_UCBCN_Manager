@@ -866,7 +866,6 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
             
             if ($additional) {
                 $cal = new UNL_UCBCN_Calendar();
-                $cal->name = "New Cal";
                 $cal->uidcreated  = $this->user->uid;
                 $cal->uidlastupdated = $this->user->uid;
                 $cal->account_id     = $this->account->id;
