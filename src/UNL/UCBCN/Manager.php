@@ -878,6 +878,8 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
             } else {
                 $form     = $fb->getForm($this->uri.'?action=calendar&calendar_id='.$cal->id);
             }
+            $form->addRule('name','Name is required.','required');
+            $form->addRule('shortname','shortname is required.','required');
             $renderer = new HTML_QuickForm_Renderer_Tableless();
             //add cal here.
             $form->accept($renderer);
