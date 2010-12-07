@@ -303,7 +303,15 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
             if (empty($action) && isset($_GET['action'])) {
                 $action = $_GET['action'];
             }
+            if (isset($_GET['calendar_id']) && $_GET['calendar_id'] == 'new') {
+                $action = "newCal";
+            }
             switch ($action) {
+            case 'newCal':
+                //echo "newCal";
+                $this->sectitle   = 'Create Additional Calendar';
+                $this->output[] = $this->showCalendarForm(true);
+                break;
             case 'createEvent':
                 $this->uniquebody = 'id="create"';
                 $this->sectitle   = 'Create/Edit Event';
@@ -851,19 +859,56 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
      *
      * @return string HTML form for editing a calendar.
      */
-    function showCalendarForm()
+    function showCalendarForm($additional = false)
     {
         if (isset($this->calendar) && $this->userHasPermission($this->user, 'Calendar Edit', $this->calendar)) {
             $msg      = '';
-            $fb       = DB_DataObject_FormBuilder::create($this->calendar);
-            $form     = $fb->getForm($this->uri.'?action=calendar&calendar_id='.$this->calendar->id);
+            
+            if ($additional) {
+                $cal = new UNL_UCBCN_Calendar();
+                $cal->name = "New Cal";
+                $cal->uidcreated  = $this->user->uid;
+                $cal->uidlastupdated = $this->user->uid;
+                $cal->account_id     = $this->account->id;
+            } else {
+                $cal = $this->calendar;
+            }
+            $fb       = DB_DataObject_FormBuilder::create($cal);
+            if ($additional) {
+                $form     = $fb->getForm($this->uri.'?action=newCal&calendar_id='.$cal->id);
+            } else {
+                $form     = $fb->getForm($this->uri.'?action=calendar&calendar_id='.$cal->id);
+            }
             $renderer = new HTML_QuickForm_Renderer_Tableless();
+            //add cal here.
             $form->accept($renderer);
+            
             if ($form->validate()) {
-                $form->process(array(&$fb, 'processForm'), false);
-                $form->freeze();
-                $form->removeElement('__submit__');
-                $msg = '<p>Calendar info saved...</p>';
+                $valid = true;
+                if ($additional) {
+                    //verify the shortname;
+                    $shortname = $form->getElement('shortname')->getValue();
+                    $c = new UNL_UCBCN_Calendar();
+                    $c->shortname = $shortname;
+                    $count = $c->find();
+                    if ($count) {
+                        $valid = false;
+                        $msg = '<p>That short name is already being used.</p>';
+                    }
+                }
+                if ($valid) {
+                    $form->process(array(&$fb, 'processForm'), false);
+                    $form->freeze();
+                    $form->removeElement('__submit__');
+                    //ensure permissions
+                    $calendars = UNL_UCBCN::factory('calendar');
+                    $calendars->account_id = $this->account->id;
+                    $calendars->find();
+                    while ($calendars->fetch()) {
+                        $calendars->addUser($this->user);
+                    }
+                    $msg = '<p>Calendar info saved...</p>';
+                }
             }
             return $msg.$renderer->toHtml();
         } else {
@@ -1074,22 +1119,19 @@ class UNL_UCBCN_Manager extends UNL_UCBCN
         if (PEAR::isError($res)) {
             return new UNL_UCBCN_Error($res->getMessage());
         }
-        if ($res->numRows()>1) {
-            $form       = new HTML_QuickForm('cal_choose', 'get');
-            $cal_select = HTML_QuickForm::createElement('select', 'calendar_id', '');
-            $cal_select->addOption('Choose your calendar', $_SESSION['calendar_id']);
-            while ($row = $res->fetchRow()) {
-                $cal_select->addOption($row[1], $row[0]);
-            }
-            $form->addElement($cal_select);
-            $form->addElement('submit', 'submit', 'Go');
-            $renderer = new HTML_QuickForm_Renderer_Tableless();
-            $form->accept($renderer);
-            $output = $renderer->toHtml();
-        } else {
-            // User has no other calendars to manage.
-            $output = '';
+        $form       = new HTML_QuickForm('cal_choose', 'get');
+        $cal_select = HTML_QuickForm::createElement('select', 'calendar_id', '');
+        $cal_select->addOption('Choose your calendar', $_SESSION['calendar_id']);
+        while ($row = $res->fetchRow()) {
+            $cal_select->addOption($row[1], $row[0]);
         }
+        //Add new cal
+        $cal_select->addOption('New Calendar', 'new');
+        $form->addElement($cal_select);
+        $form->addElement('submit', 'submit', 'Go');
+        $renderer = new HTML_QuickForm_Renderer_Tableless();
+        $form->accept($renderer);
+        $output = $renderer->toHtml();
         return $output;
     }
     
