@@ -5,7 +5,7 @@
 	$form->addElement('text',$this->user_field,'User');
 	$form->addElement('password',$this->password_field,'Password');
 	$form->addElement('xbutton','submit','Submit','type="submit"');
-	$renderer =& new HTML_QuickForm_Renderer_Tableless();
+	$renderer = new HTML_QuickForm_Renderer_Tableless();
 	$form->accept($renderer);
 	echo $renderer->toHtml();
 ?>

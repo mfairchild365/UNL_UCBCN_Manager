@@ -8,7 +8,7 @@
 	$form->addElement('password',$this->password_field,'Password');
 	$form->addElement('xbutton','submit','Submit','type="submit"');
 	$form->addElement('static','','','<a href="http://my.unl.edu/webapps/blackboard/password" title="" id="forgot">(Forgot your password?)</a>');
-	$renderer =& new HTML_QuickForm_Renderer_Tableless();
+	$renderer = new HTML_QuickForm_Renderer_Tableless();
 	$form->accept($renderer);
 	echo $renderer->toHtml();
 ?>
