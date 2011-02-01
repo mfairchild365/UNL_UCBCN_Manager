@@ -8,6 +8,9 @@ header('Content-Type:text/html; charset=UTF-8');
         <title><?php echo $this->doctitle; ?></title>
         <link rel="stylesheet" type="text/css" media="screen" href="templates/vanilla/manager_main.css" />
         <link rel="stylesheet" type="text/css" media="screen" href="templates/vanilla/dialog/dialog_box.css" />
+        <link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/themes/<?php echo $this->calendar->theme ?>/jquery-ui.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js"></script>
         <script type="text/javascript" src="templates/vanilla/manager.js"></script>
         <script type="text/javascript" src="templates/vanilla/dialog/dialog_box.js"></script>
     </head>
